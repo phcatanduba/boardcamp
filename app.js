@@ -163,7 +163,6 @@ app.post('/customers', async (req, res) => {
             });
             const customer = customerSchema.validate(validatingCustomer);
             if ('error' in customer) {
-                console.log(customer.error);
                 res.sendStatus(400);
             } else {
                 const { name, phone, cpf, birthday } = validatingCustomer;
@@ -212,7 +211,6 @@ app.put('/customers/:id', async (req, res) => {
             });
             const customer = customerSchema.validate(validatingCustomer);
             if ('error' in customer) {
-                console.log(customer.error);
                 res.sendStatus(400);
             } else {
                 const { name, phone, cpf, birthday } = validatingCustomer;
@@ -294,7 +292,6 @@ app.post('/customers', async (req, res) => {
             });
             const customer = customerSchema.validate(validatingCustomer);
             if ('error' in customer) {
-                console.log(customer.error);
                 res.sendStatus(400);
             } else {
                 const { name, phone, cpf, birthday } = validatingCustomer;
@@ -343,7 +340,6 @@ app.put('/customers/:id', async (req, res) => {
             });
             const customer = customerSchema.validate(validatingCustomer);
             if ('error' in customer) {
-                console.log(customer.error);
                 res.sendStatus(400);
             } else {
                 const { name, phone, cpf, birthday } = validatingCustomer;
@@ -363,8 +359,6 @@ app.put('/customers/:id', async (req, res) => {
 /*--------------------------RENTALS--------------------------------*/
 
 app.get('/rentals', async (req, res) => {
-    console.log(req.query.gamesId);
-
     const responseRentals = await connection.query(
         `SELECT rentals.*, customers.id AS "idCustomers", customers.name AS "nameCustomers", games.id AS "idGames",
         games.name AS "nameGames", games."categoryId", categories.id AS "idCategories", categories.name AS "categoryName"
@@ -403,7 +397,6 @@ app.get('/rentals', async (req, res) => {
             })
         );
     } else if (req.query.gamesId) {
-        console.log('ok');
         res.send(
             rentals.filter((r, i) => {
                 return r.game.id === parseInt(req.query.gamesId);
@@ -478,7 +471,6 @@ app.post('/rentals/:id/return', async (req, res) => {
         if (returnDate !== null) {
             res.sendStatus(400);
         } else {
-            console.log(fees);
             const returning = await connection.query(
                 'UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE id = $3',
                 [today, fees, id]
