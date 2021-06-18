@@ -48,6 +48,55 @@ app.post('/categories', async (req, res) => {
     }
 });
 
+/*--------------------------GAMES--------------------------------*/
+
+app.get('/games', async (req, res) => {
+    const { name } = req.query;
+    if (name === undefined) {
+        const games = await connection.query('SELECT * FROM games');
+        res.send(games.rows);
+    } else {
+        const games = await connection.query(
+            'SELECT * FROM games WHERE name ILIKE $1',
+            ['%' + name + '%']
+        );
+        res.send(games.rows);
+    }
+});
+
+app.post('/games', async (req, res) => {
+    const { name, stockTotal, pricePerDay, categoryId, image } = req.body;
+    const verifyId = await connection.query(
+        'SELECT * FROM categories WHERE id = $1',
+        [categoryId]
+    );
+    const verifyName = await connection.query(
+        'SELECT * FROM games WHERE name = $1',
+        [name]
+    );
+
+    if (name === '') {
+        res.sendStatus(400);
+    } else if (stockTotal <= 0 || pricePerDay <= 0) {
+        res.sendStatus(400);
+    } else if (parseInt(verifyId.rows.length) === 0) {
+        res.sendStatus(400);
+    } else if (parseInt(verifyName.rows.length) != 0) {
+        res.sendStatus(409);
+    } else {
+        try {
+            const response = await connection.query(
+                'INSERT INTO games (name, "stockTotal", "pricePerDay", "categoryId", image) VALUES ($1, $2, $3, $4, $5)',
+                [name, stockTotal, pricePerDay, categoryId, image]
+            );
+            res.sendStatus(201);
+        } catch (e) {
+            console.log(e);
+            res.sendStatus(500);
+        }
+    }
+});
+
 app.listen(4000, () => {
     console.log('rodando');
 });
