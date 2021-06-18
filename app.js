@@ -374,9 +374,6 @@ app.get('/rentals', async (req, res) => {
         JOIN categories ON games."categoryId" = categories.id`
     );
 
-    let teste = await connection.query('SELECT * FROM rentals');
-    console.log(responseRentals.rows);
-
     const rentals = responseRentals.rows.map((r, i) => {
         return {
             id: r.id,
